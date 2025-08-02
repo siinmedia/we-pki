@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PKI - Pecinta Kucing Indonesia | Satu Meong, Satu Suara</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        @keyframes scanline {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 10px; }
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .scanlines {
+            position: relative;
+        }
+        .scanlines::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 0, 0, 0.2) 51%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            animation: scanline 1s linear infinite;
+            z-index: 10;
+        }
+        .crt-effect {
+            position: relative;
+        }
+        .crt-effect::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                ellipse at center,
+                rgba(214, 40, 40, 0.1) 0%,
+                rgba(0, 0, 0, 0.9) 100%
+            );
+            pointer-events: none;
+            z-index: 5;
+        }
+        .marquee {
+            white-space: nowrap;
+            overflow: hidden;
+            animation: marquee 15s linear infinite;
+        }
+        .hover-blink:hover {
+            animation: blink 0.5s step-end infinite;
+        }
+        .terminal-input {
+            background: black;
+            border: 2px solid #d62828;
+            color: #ffdd57;
+            font-family: 'IBM Plex Mono', monospace;
+            padding: 0.5rem;
+            outline: none;
+        }
+        .terminal-input:focus {
+            box-shadow: 0 0 0 2px #ffdd57;
+        }
+        .blip-button {
+            transition: all 0.1s;
+        }
+        .blip-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #d62828;
+        }
+        .blip-button:active {
+            transform: scale(0.98);
+        }
+        .grain-effect {
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+<body class="bg-black text-amber-50 font-mono min-h-screen crt-effect scanlines grain-effect">
+    <div id="loading" class="fixed inset-0 bg-black z-50 flex flex-col items-center justify-center">
+        <div class="text-red-600 font-bold text-2xl md:text-4xl mb-4 font-['Press_Start_2P']">
+            INISIASI CHANNEL RAHASIA...
+        </div>
+        <div class="text-yellow-200 font-bold text-xl md:text-2xl font-['Press_Start_2P']">
+            MEMPROSES AGEN MEONG...
+        </div>
+        <div class="w-64 h-2 bg-gray-800 mt-4">
+            <div id="progress-bar" class="h-full bg-red-600" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="border-b-4 border-red-700 py-4 px-6">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center mb-4 md:mb-0">
+                <div class="bg-red-700 w-12 h-12 flex items-center justify-center mr-4">
+                    <span class="text-3xl">🐾</span>
+                </div>
+                <h1 class="text-2xl md:text-3xl font-bold font-['Press_Start_2P']">
+                    <span class="text-red-600">PKI</span> - PECINTA KUCING INDONESIA
+                </h1>
+            </div>
+            <nav class="flex space-x-1 md:space-x-4">
+                <a href="#manifesto" class="px-2 py-1 bg-black text-amber-50 border border-red-700 hover:bg-red-700 hover:text-black transition">MANIFESTO</a>
+                <a href="#galeri" class="px-2 py-1 bg-black text-amber-50 border border-red-700 hover:bg-red-700 hover:text-black transition">GALERI</a>
+                <a href="#gabung" class="px-2 py-1 bg-red-700 text-black border border-red-700 hover:bg-amber-50 transition">GABUNG</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="py-12 md:py-20 px-6 text-center border-b-4 border-red-700 relative overflow-hidden">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-4xl md:text-6xl font-bold mb-6 font-['Press_Start_2P'] leading-tight">
+                <span class="text-red-600">SATU MEONG,</span><br>
+                <span class="text-amber-200">SATU SUARA.</span>
+            </h2>
+            <p class="text-xl md:text-2xl mb-8 font-['IBM_Plex_Mono']">
+                "Kucing tidak bisa bicara, tapi mereka punya PKI!"
+            </p>
+            <div class="flex justify-center">
+                <a href="#gabung" class="blip-button px-8 py-4 bg-red-700 text-black font-bold text-xl md:text-2xl border-4 border-black hover:border-amber-200 font-['Press_Start_2P'] transition-all">
+                    GABUNG GERAKAN
+                </a>
+            </div>
+        </div>
+        <div class="marquee mt-8 py-2 bg-red-700 text-black font-bold font-['Press_Start_2P']">
+             💥 AYO SELAMATKAN KUCING-KUCING NUSANTARA 💥 AYO SELAMATKAN KUCING-KUCING NUSANTARA 💥
+        </div>
+        <div class="absolute top-1/2 right-10 transform -translate-y-1/2 hidden md:block">
+            <div class="text-8xl">🐈</div>
+        </div>
+    </section>
+
+    <!-- Tentang PKI -->
+    <section class="py-12 px-6 border-b-4 border-red-700">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-3xl font-bold mb-8 text-center font-['Press_Start_2P'] text-red-600">
+                TENTANG PKI
+            </h2>
+            <div class="bg-black p-6 border-2 border-red-700">
+                <p class="mb-4 font-['IBM_Plex_Mono']">
+                    Pada tahun 1983, sekelompok revolusioner meong berkumpul di pelosok Jawa Barat. Mereka menyaksikan penindasan sistematis terhadap kucing-kucing nusantara. Dari situasi inilah lahir PKI - Pecinta Kucing Indonesia.
+                </p>
+                <p class="mb-4 font-['IBM_Plex_Mono']">
+                    Gerakan bawah tanah ini berkembang pesat, menyebarkan ajaran Meongisme ke seluruh penjuru tanah air. Kami percaya bahwa setiap kucing memiliki hak yang sama atas kasih sayang, makanan enak, dan tempat tidur yang hangat.
+                </p>
+                <blockquote class="border-l-4 border-red-700 pl-4 my-6 italic font-['IBM_Plex_Mono'] text-amber-200">
+                    "Ketika satu meong ditindas, semua meong bangkit!"
+                </blockquote>
+                <p class="font-['IBM_Plex_Mono']">
+                    Hari ini, PKI telah menjadi gerakan nasional dengan jutaan anggota yang berdedikasi untuk melindungi hak-hak dasar semua kucing Indonesia. Revolusi Meong tidak bisa dihentikan!
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Manifesto Meongisme -->
+    <section id="manifesto" class="py-12 px-6 border-b-4 border-red-700">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-3xl font-bold mb-8 text-center font-['Press_Start_2P'] text-red-600">
+                MANIFESTO MEONGISME
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-black p-6 border-2 border-red-700 hover-blink">
+                    <div class="text-4xl mb-4">🐾</div>
+                    <h3 class="text-xl font-bold mb-2 font-['Press_Start_2P']">PASAL 1</h3>
+                    <p class="font-['IBM_Plex_Mono']">
+                        Kucing berhak mendapatkan keadilan makanan. Setiap meong berhak atas porsi yang sama dan adil, tanpa diskriminasi ras atau warna bulu.
+                    </p>
+                </div>
+                <div class="bg-black p-6 border-2 border-red-700 hover-blink">
+                    <div class="text-4xl mb-4">🐾</div>
+                    <h3 class="text-xl font-bold mb-2 font-['Press_Start_2P']">PASAL 2</h3>
+                    <p class="font-['IBM_Plex_Mono']">
+                        Meong bukan komoditas, mereka revolusioner kecil. Kucing bukan benda yang bisa diperjualbelikan, melainkan pejuang kemerdekaan yang setia.
+                    </p>
+                </div>
+                <div class="bg-black p-6 border-2 border-red-700 hover-blink">
+                    <div class="text-4xl mb-4">🐾</div>
+                    <h3 class="text-xl font-bold mb-2 font-['Press_Start_2P']">PASAL 3</h3>
+                    <p class="font-['IBM_Plex_Mono']">
+                        Setiap rumah, satu meong. Ini bukan sekedar slogan, tapi program revolusioner untuk memastikan tidak ada kucing yang terlantar.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Galeri Pejuang Meong -->
+    <section id="galeri" class="py-12 px-6 border-b-4 border-red-700">
+        <div class="container mx-auto max-w-6xl">
+            <h2 class="text-3xl font-bold mb-8 text-center font-['Press_Start_2P'] text-red-600">
+                GALERI PEJUANG MEONG
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="hover-blink">
+                    <img src="https://placekitten.com/300/300" alt="Pejuang Meong" class="w-full h-48 object-cover filter grayscale brightness-75 hover:grayscale-0 hover:brightness-100 transition">
+                </div>
+                <div class="hover-blink">
+                    <img src="https://placekitten.com/301/301" alt="Pejuang Meong" class="w-full h-48 object-cover filter grayscale brightness-75 hover:grayscale-0 hover:brightness-100 transition">
+                </div>
+                <div class="hover-blink">
+                    <img src="https://placekitten.com/302/302" alt="Pejuang Meong" class="w-full h-48 object-cover filter grayscale brightness-75 hover:grayscale-0 hover:brightness-100 transition">
+                </div>
+                <div class="hover-blink">
+                    <img src="https://placekitten.com/303/303" alt="Pejuang Meong" class="w-full h-48 object-cover filter grayscale brightness-75 hover:grayscale-0 hover:brightness-100 transition">
+                </div>
+                <div class="hover-blink">
+                    <img src="https://placekitten.com/304/304" alt="Pejuang Meong" class="w-full h-48 object-cover filter grayscale brightness-75 hover:grayscale-0 hover:brightness-100 transition">
+                </div>
+                <div class="hover-blink">
+                    <img src="https://placekitten.com/305/305" alt="Pejuang Meong" class="w-full h-48 object-cover filter grayscale brightness-75 hover:grayscale-0 hover:brightness-100 transition">
+                </div>
+                <div class="hover-blink">
+                    <img src="https://placekitten.com/306/306" alt="Pejuang Meong" class="w-full h-48 object-cover filter grayscale brightness-75 hover:grayscale-0 hover:brightness-100 transition">
+                </div>
+                <div class="hover-blink">
+                    <img src="https://placekitten.com/307/307" alt="Pejuang Meong" class="w-full h-48 object-cover filter grayscale brightness-75 hover:grayscale-0 hover:brightness-100 transition">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Formulir Anggota -->
+    <section id="gabung" class="py-12 px-6 border-b-4 border-red-700">
+        <div class="container mx-auto max-w-4xl">
+            <h2 class="text-3xl font-bold mb-8 text-center font-['Press_Start_2P'] text-red-600">
+                FORMULIR ANGGOTA
+            </h2>
+            <div class="bg-black p-6 border-2 border-red-700">
+                <form class="space-y-6 font-['IBM_Plex_Mono']">
+                    <div>
+                        <label class="block text-amber-200 mb-2">> Nama:</label>
+                        <input type="text" class="terminal-input w-full" placeholder="NAMA LENGKAP ANDA">
+                    </div>
+                    <div>
+                        <label class="block text-amber-200 mb-2">> Wilayah:</label>
+                        <input type="text" class="terminal-input w-full" placeholder="PROVINSI/KOTA">
+                    </div>
+                    <div>
+                        <label class="block text-amber-200 mb-2">> Kucing Kamu:</label>
+                        <input type="text" class="terminal-input w-full" placeholder="NAMA & RAS KUCING">
+                    </div>
+                    <div>
+                        <label class="block text-amber-200 mb-2">> Alasan Bergabung:</label>
+                        <textarea class="terminal-input w-full h-24" placeholder="JELASKAN MENGAPA ANDA INGIN BERGABUNG DENGAN PKI"></textarea>
+                    </div>
+                    <div class="pt-4">
+                        <button type="submit" class="blip-button px-8 py-3 bg-red-700 text-black font-bold text-xl border-4 border-black hover:border-amber-200 font-['Press_Start_2P'] transition-all">
+                            KIRIM MEONG
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 px-6 bg-black">
+        <div class="container mx-auto max-w-6xl">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center mb-6 md:mb-0">
+                    <div class="bg-red-700 w-10 h-10 flex items-center justify-center mr-3">
+                        <span class="text-2xl">🐾</span>
+                    </div>
+                    <div>
+                        <div class="text-xl font-bold font-['Press_Start_2P']">
+                            PKI - PECINTA KUCING INDONESIA
+                        </div>
+                        <div class="text-sm font-['IBM_Plex_Mono']">
+                            "Dari Meong, Oleh Meong, Untuk Meong."
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center md:text-left">
+                    <a href="#manifesto" class="text-sm hover:text-red-600 transition">MANIFESTO</a>
+                    <a href="#galeri" class="text-sm hover:text-red-600 transition">GALERI</a>
+                    <a href="#gabung" class="text-sm hover:text-red-600 transition">GABUNG</a>
+                    <a href="#" class="text-sm hover:text-red-600 transition">BANTUAN</a>
+                    <a href="#" class="text-sm hover:text-red-600 transition">MEONGCHAT</a>
+                </div>
+            </div>
+            <div class="mt-8 pt-4 border-t border-red-700 text-center text-xs font-['IBM_Plex_Mono']">
+                © 1983-2023 PKI - Pecinta Kucing Indonesia. Semua hak dilindungi oleh kucing.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Easter Egg Button -->
+    <div class="fixed bottom-4 right-4">
+        <button id="easterEgg" class="w-12 h-12 bg-red-700 rounded-full flex items-center justify-center text-xl hover:bg-amber-200 hover:text-black transition">
+             🎵
+        </button>
+    </div>
+
+    <script>
+        // Loading screen animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const loading = document.getElementById('loading');
+            const progressBar = document.getElementById('progress-bar');
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 5;
+                progressBar.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        loading.style.opacity = '0';
+                        setTimeout(() => {
+                            loading.style.display = 'none';
+                        }, 500);
+                    }, 500);
+                }
+            }, 100);
+            
+            // Easter egg - 8-bit music
+            const easterEgg = document.getElementById('easterEgg');
+            let audio = new Audio();
+            let isPlaying = false;
+            
+            easterEgg.addEventListener('click', function() {
+                if (!isPlaying) {
+                    // This is a base64 encoded short 8-bit music clip
+                    audio.src = 'data:audio/mpeg;base64,SUQzBAAAAAABEVRYWFgAAAAtAAADY29tbWVudABCaWdTb3VuZEJhbmsuY29tIC8gTGFTb25vdGhlcXVlLm9yZwBURU5DAAAAHQAAA1N3aXRjaCBQbHVzIMKpIE5DSCBTb2Z0d2FyZQBUSVQyAAAABgAAAzIyMzUAVFNTRQAAAA8AAANMYXZmNTcuODMuMTAwAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV';
+                    audio.loop = true;
+                    audio.play();
+                    isPlaying = true;
+                    easterEgg.textContent = '🔇';
+                } else {
+                    audio.pause();
+                    isPlaying = false;
+                    easterEgg.textContent = '🎵';
+                }
+            });
+            
+            // Blip sound effect for buttons
+            const buttons = document.querySelectorAll('button, a[href]');
+            buttons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const blip = new Audio();
+                    blip.src = 'data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU...'; // Short blip sound
+                    blip.volume = 0.2;
+                    blip.play();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
