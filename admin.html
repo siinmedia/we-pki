@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - PKI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        @keyframes scanline {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 10px; }
+        }
+        .scanlines {
+            position: relative;
+        }
+        .scanlines::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 0, 0, 0.2) 51%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            animation: scanline 1s linear infinite;
+            z-index: 10;
+        }
+        .terminal-input, .terminal-textarea {
+            background: black;
+            border: 2px solid #d62828;
+            color: #ffdd57;
+            font-family: 'IBM Plex Mono', monospace;
+            padding: 0.75rem;
+            outline: none;
+        }
+        .terminal-input:focus, .terminal-textarea:focus {
+            box-shadow: 0 0 0 2px #ffdd57;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .tab-button.active {
+            background-color: #d62828;
+            color: black;
+        }
+    </style>
+</head>
+<body class="bg-black text-amber-50 font-mono min-h-screen scanlines">
+    <!-- Header -->
+    <header class="border-b-4 border-red-700 py-4 px-6">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="flex items-center">
+                <div class="bg-red-700 w-10 h-10 flex items-center justify-center mr-3">
+                    <span class="text-2xl">🐾</span>
+                </div>
+                <h1 class="text-xl font-bold font-['Press_Start_2P'] text-red-600">
+                    MARKAS PKI
+                </h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span class="font-['IBM_Plex_Mono']" id="userEmail"></span>
+                <button id="logoutBtn" class="px-4 py-2 bg-red-700 text-black font-bold border border-black hover:border-amber-200 transition">
+                    KELUAR
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="border-b-2 border-red-700 px-6">
+        <div class="container mx-auto">
+            <div class="flex space-x-1">
+                <button class="tab-button active px-4 py-2 font-['IBM_Plex_Mono'] border-r border-red-700" data-tab="articles">
+                    ARTIKEL
+                </button>
+                <button class="tab-button px-4 py-2 font-['IBM_Plex_Mono'] border-r border-red-700" data-tab="gallery">
+                    GALERI
+                </button>
+                <button class="tab-button px-4 py-2 font-['IBM_Plex_Mono']" data-tab="settings">
+                    PENGATURAN
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-6 py-8">
+        <!-- Articles Tab -->
+        <div id="articles" class="tab-content active">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold font-['Press_Start_2P'] text-red-600">MANAJEMEN ARTIKEL</h2>
+                <button id="newArticleBtn" class="px-6 py-3 bg-red-700 text-black font-bold border-4 border-black hover:border-amber-200 font-['Press_Start_2P'] transition-all">
+                    + ARTIKEL BARU
+                </button>
+            </div>
+
+            <!-- Article Form -->
+            <div id="articleForm" class="bg-black border-2 border-red-700 p-6 mb-6 hidden">
+                <h3 class="text-xl font-bold mb-4 font-['Press_Start_2P']" id="formTitle">ARTIKEL BARU</h3>
+                <form id="articleFormElement" class="space-y-4">
+                    <input type="hidden" id="articleId">
+                    <div>
+                        <label class="block text-amber-200 mb-2 font-['IBM_Plex_Mono']">Judul:</label>
+                        <input type="text" id="articleTitle" class="terminal-input w-full" required>
+                    </div>
+                    <div>
+                        <label class="block text-amber-200 mb-2 font-['IBM_Plex_Mono']">Deskripsi Singkat:</label>
+                        <input type="text" id="articleExcerpt" class="terminal-input w-full" required>
+                    </div>
+                    <div>
+                        <label class="block text-amber-200 mb-2 font-['IBM_Plex_Mono']">Konten (Markdown):</label>
+                        <textarea id="articleContent" class="terminal-textarea w-full h-64" required></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-amber-200 mb-2 font-['IBM_Plex_Mono']">URL Gambar:</label>
+                        <input type="url" id="articleImage" class="terminal-input w-full">
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="articlePublished" class="mr-2">
+                            <span class="font-['IBM_Plex_Mono']">Publikasikan</span>
+                        </label>
+                    </div>
+                    <div class="flex space-x-4">
+                        <button type="submit" class="px-6 py-2 bg-red-700 text-black font-bold border border-black hover:border-amber-200 transition">
+                            SIMPAN
+                        </button>
+                        <button type="button" id="cancelArticle" class="px-6 py-2 bg-gray-700 text-white font-bold border border-gray-500 hover:border-amber-200 transition">
+                            BATAL
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Articles List -->
+            <div class="bg-black border-2 border-red-700 p-6">
+                <div id="articlesList" class="space-y-4">
+                    <!-- Articles will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Gallery Tab -->
+        <div id="gallery" class="tab-content">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold font-['Press_Start_2P'] text-red-600">MANAJEMEN GALERI</h2>
+                <button id="uploadImageBtn" class="px-6 py-3 bg-red-700 text-black font-bold border-4 border-black hover:border-amber-200 font-['Press_Start_2P'] transition-all">
+                    + UPLOAD GAMBAR
+                </button>
+            </div>
+
+            <!-- Upload Form -->
+            <div id="uploadForm" class="bg-black border-2 border-red-700 p-6 mb-6 hidden">
+                <h3 class="text-xl font-bold mb-4 font-['Press_Start_2P']">UPLOAD GAMBAR BARU</h3>
+                <form id="uploadFormElement" class="space-y-4">
+                    <div>
+                        <label class="block text-amber-200 mb-2 font-['IBM_Plex_Mono']">Pilih Gambar:</label>
+                        <input type="file" id="imageFile" accept="image/*" class="terminal-input w-full" required>
+                    </div>
+                    <div>
+                        <label class="block text-amber-200 mb-2 font-['IBM_Plex_Mono']">Nama Kucing:</label>
+                        <input type="text" id="imageName" class="terminal-input w-full" required>
+                    </div>
+                    <div>
+                        <label class="block text-amber-200 mb-2 font-['IBM_Plex_Mono']">Deskripsi:</label>
+                        <textarea id="imageDescription" class="terminal-textarea w-full h-24"></textarea>
+                    </div>
+                    <div class="flex space-x-4">
+                        <button type="submit" class="px-6 py-2 bg-red-700 text-black font-bold border border-black hover:border-amber-200 transition">
+                            UPLOAD
+                        </button>
+                        <button type="button" id="cancelUpload" class="px-6 py-2 bg-gray-700 text-white font-bold border border-gray-500 hover:border-amber-200 transition">
+                            BATAL
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Gallery Grid -->
+            <div class="bg-black border-2 border-red-700 p-6">
+                <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Gallery images will be loaded here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-content">
+            <h2 class="text-2xl font-bold font-['Press_Start_2P'] text-red-600 mb-6">PENGATURAN SISTEM</h2>
+            <div class="bg-black border-2 border-red-700 p-6">
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-lg font-bold mb-2 font-['IBM_Plex_Mono']">Statistik</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div class="bg-red-900 p-4 border border-red-700">
+                                <div class="text-2xl font-bold" id="totalArticles">0</div>
+                                <div class="text-sm">Total Artikel</div>
+                            </div>
+                            <div class="bg-red-900 p-4 border border-red-700">
+                                <div class="text-2xl font-bold" id="publishedArticles">0</div>
+                                <div class="text-sm">Artikel Terbit</div>
+                            </div>
+                            <div class="bg-red-900 p-4 border border-red-700">
+                                <div class="text-2xl font-bold" id="totalImages">0</div>
+                                <div class="text-sm">Total Gambar</div>
+                            </div>
+                            <div class="bg-red-900 p-4 border border-red-700">
+                                <div class="text-2xl font-bold" id="storageUsed">0 MB</div>
+                                <div class="text-sm">Storage Terpakai</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { AuthManager } from './src/utils/auth.js';
+        import { BlogManager } from './src/utils/blog.js';
+        import { GalleryManager } from './src/utils/gallery.js';
+
+        // Check authentication
+        window.addEventListener('load', async () => {
+            const user = await AuthManager.getCurrentUser();
+            if (!user) {
+                AuthManager.redirectToLogin();
+                return;
+            }
+
+            const isAdmin = await AuthManager.checkAdminRole(user.id);
+            if (!isAdmin) {
+                AuthManager.redirectToLogin();
+                return;
+            }
+
+            document.getElementById('userEmail').textContent = user.email;
+            loadArticles();
+            loadGallery();
+            loadStats();
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            await AuthManager.logout();
+            AuthManager.redirectToLogin();
+        });
+
+        // Tab switching
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.dataset.tab;
+                
+                // Update active tab button
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                button.classList.add('active');
+                
+                // Update active tab content
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+
+        // Article management
+        document.getElementById('newArticleBtn').addEventListener('click', () => {
+            document.getElementById('articleForm').classList.remove('hidden');
+            document.getElementById('formTitle').textContent = 'ARTIKEL BARU';
+            document.getElementById('articleFormElement').reset();
+            document.getElementById('articleId').value = '';
+        });
+
+        document.getElementById('cancelArticle').addEventListener('click', () => {
+            document.getElementById('articleForm').classList.add('hidden');
+        });
+
+        document.getElementById('articleFormElement').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const articleData = {
+                title: document.getElementById('articleTitle').value,
+                excerpt: document.getElementById('articleExcerpt').value,
+                content: document.getElementById('articleContent').value,
+                featured_image: document.getElementById('articleImage').value,
+                published: document.getElementById('articlePublished').checked
+            };
+
+            const articleId = document.getElementById('articleId').value;
+            let result;
+
+            if (articleId) {
+                result = await BlogManager.updateArticle(articleId, articleData);
+            } else {
+                result = await BlogManager.createArticle(articleData);
+            }
+
+            if (result.success) {
+                document.getElementById('articleForm').classList.add('hidden');
+                loadArticles();
+            } else {
+                alert('Error: ' + result.error);
+            }
+        });
+
+        // Gallery management
+        document.getElementById('uploadImageBtn').addEventListener('click', () => {
+            document.getElementById('uploadForm').classList.remove('hidden');
+        });
+
+        document.getElementById('cancelUpload').addEventListener('click', () => {
+            document.getElementById('uploadForm').classList.add('hidden');
+        });
+
+        document.getElementById('uploadFormElement').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const file = document.getElementById('imageFile').files[0];
+            if (!file) return;
+
+            // Upload image
+            const uploadResult = await GalleryManager.uploadImage(file);
+            if (!uploadResult.success) {
+                alert('Error uploading image: ' + uploadResult.error);
+                return;
+            }
+
+            // Add to gallery
+            const galleryData = {
+                name: document.getElementById('imageName').value,
+                description: document.getElementById('imageDescription').value,
+                image_url: uploadResult.url,
+                image_path: uploadResult.path
+            };
+
+            const result = await GalleryManager.addGalleryImage(galleryData);
+            if (result.success) {
+                document.getElementById('uploadForm').classList.add('hidden');
+                document.getElementById('uploadFormElement').reset();
+                loadGallery();
+            } else {
+                alert('Error: ' + result.error);
+            }
+        });
+
+        // Load functions
+        async function loadArticles() {
+            const result = await BlogManager.getAllArticlesForAdmin();
+            if (result.success) {
+                const articlesList = document.getElementById('articlesList');
+                articlesList.innerHTML = result.data.map(article => `
+                    <div class="border border-red-700 p-4 flex justify-between items-center">
+                        <div>
+                            <h3 class="font-bold">${article.title}</h3>
+                            <p class="text-sm text-gray-400">${article.excerpt}</p>
+                            <p class="text-xs text-amber-200">
+                                ${article.published ? 'Terbit' : 'Draft'} • 
+                                ${new Date(article.created_at).toLocaleDateString('id-ID')}
+                            </p>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="editArticle('${article.id}')" class="px-3 py-1 bg-blue-700 text-white text-sm">
+                                Edit
+                            </button>
+                            <button onclick="deleteArticle('${article.id}')" class="px-3 py-1 bg-red-700 text-white text-sm">
+                                Hapus
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        async function loadGallery() {
+            const result = await GalleryManager.getGalleryImages();
+            if (result.success) {
+                const galleryGrid = document.getElementById('galleryGrid');
+                galleryGrid.innerHTML = result.data.map(image => `
+                    <div class="relative group">
+                        <img src="${image.image_url}" alt="${image.name}" class="w-full h-48 object-cover">
+                        <div class="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <button onclick="deleteGalleryImage('${image.id}')" class="px-3 py-1 bg-red-700 text-white text-sm">
+                                Hapus
+                            </button>
+                        </div>
+                        <div class="p-2 bg-gray-900">
+                            <p class="text-sm font-bold">${image.name}</p>
+                            <p class="text-xs text-gray-400">${image.description || ''}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        async function loadStats() {
+            const articlesResult = await BlogManager.getAllArticlesForAdmin();
+            const galleryResult = await GalleryManager.getGalleryImages();
+            
+            if (articlesResult.success) {
+                document.getElementById('totalArticles').textContent = articlesResult.data.length;
+                document.getElementById('publishedArticles').textContent = 
+                    articlesResult.data.filter(a => a.published).length;
+            }
+            
+            if (galleryResult.success) {
+                document.getElementById('totalImages').textContent = galleryResult.data.length;
+            }
+        }
+
+        // Global functions for buttons
+        window.editArticle = async (id) => {
+            const result = await BlogManager.getAllArticlesForAdmin();
+            if (result.success) {
+                const article = result.data.find(a => a.id === id);
+                if (article) {
+                    document.getElementById('articleId').value = article.id;
+                    document.getElementById('articleTitle').value = article.title;
+                    document.getElementById('articleExcerpt').value = article.excerpt;
+                    document.getElementById('articleContent').value = article.content;
+                    document.getElementById('articleImage').value = article.featured_image || '';
+                    document.getElementById('articlePublished').checked = article.published;
+                    document.getElementById('formTitle').textContent = 'EDIT ARTIKEL';
+                    document.getElementById('articleForm').classList.remove('hidden');
+                }
+            }
+        };
+
+        window.deleteArticle = async (id) => {
+            if (confirm('Yakin ingin menghapus artikel ini?')) {
+                const result = await BlogManager.deleteArticle(id);
+                if (result.success) {
+                    loadArticles();
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            }
+        };
+
+        window.deleteGalleryImage = async (id) => {
+            if (confirm('Yakin ingin menghapus gambar ini?')) {
+                const result = await GalleryManager.deleteGalleryImage(id);
+                if (result.success) {
+                    loadGallery();
+                    loadStats();
+                } else {
+                    alert('Error: ' + result.error);
+                }
+            }
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin - PKI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=IBM+Plex+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        @keyframes scanline {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 10px; }
+        }
+        .scanlines {
+            position: relative;
+        }
+        .scanlines::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 50%,
+                rgba(0, 0, 0, 0.2) 51%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            animation: scanline 1s linear infinite;
+            z-index: 10;
+        }
+        .terminal-input {
+            background: black;
+            border: 2px solid #d62828;
+            color: #ffdd57;
+            font-family: 'IBM Plex Mono', monospace;
+            padding: 0.75rem;
+            outline: none;
+        }
+        .terminal-input:focus {
+            box-shadow: 0 0 0 2px #ffdd57;
+        }
+    </style>
+</head>
+<body class="bg-black text-amber-50 font-mono min-h-screen scanlines">
+    <div class="min-h-screen flex items-center justify-center px-6">
+        <div class="max-w-md w-full">
+            <div class="text-center mb-8">
+                <div class="bg-red-700 w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                    <span class="text-3xl">🐾</span>
+                </div>
+                <h1 class="text-2xl font-bold font-['Press_Start_2P'] text-red-600 mb-2">
+                    AKSES TERBATAS
+                </h1>
+                <p class="font-['IBM_Plex_Mono'] text-amber-200">
+                    Hanya untuk Komandan PKI
+                </p>
+            </div>
+
+            <div class="bg-black border-2 border-red-700 p-6">
+                <form id="loginForm" class="space-y-6">
+                    <div>
+                        <label class="block text-amber-200 mb-2 font-['IBM_Plex_Mono']">> Email:</label>
+                        <input type="email" id="email" class="terminal-input w-full" placeholder="komandan@pki.id" required>
+                    </div>
+                    <div>
+                        <label class="block text-amber-200 mb-2 font-['IBM_Plex_Mono']">> Password:</label>
+                        <input type="password" id="password" class="terminal-input w-full" placeholder="••••••••" required>
+                    </div>
+                    <div class="pt-4">
+                        <button type="submit" class="w-full px-6 py-3 bg-red-700 text-black font-bold text-lg border-4 border-black hover:border-amber-200 font-['Press_Start_2P'] transition-all">
+                            MASUK MARKAS
+                        </button>
+                    </div>
+                </form>
+                
+                <div id="errorMessage" class="mt-4 p-3 bg-red-900 border border-red-600 text-red-200 font-['IBM_Plex_Mono'] hidden">
+                </div>
+            </div>
+
+            <div class="text-center mt-6">
+                <a href="/" class="text-amber-200 hover:text-red-600 transition font-['IBM_Plex_Mono']">
+                    ← Kembali ke Beranda
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { AuthManager } from './src/utils/auth.js';
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('errorMessage');
+            
+            errorDiv.classList.add('hidden');
+            
+            const result = await AuthManager.login(email, password);
+            
+            if (result.success) {
+                // Check if user is admin
+                const isAdmin = await AuthManager.checkAdminRole(result.user.id);
+                if (isAdmin) {
+                    AuthManager.redirectToDashboard();
+                } else {
+                    errorDiv.textContent = 'Akses ditolak. Anda bukan Komandan PKI.';
+                    errorDiv.classList.remove('hidden');
+                }
+            } else {
+                errorDiv.textContent = result.error;
+                errorDiv.classList.remove('hidden');
+            }
+        });
+
+        // Check if already logged in
+        window.addEventListener('load', async () => {
+            const user = await AuthManager.getCurrentUser();
+            if (user) {
+                const isAdmin = await AuthManager.checkAdminRole(user.id);
+                if (isAdmin) {
+                    AuthManager.redirectToDashboard();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
